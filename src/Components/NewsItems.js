@@ -15,24 +15,27 @@ const NewsItems = ({
 
   const [favorite, setFavorite] = useState(false);
 
-  // Check if article already exists in favorites
-  const checkFavorite = () => {
+  // Check if article is already in favorites
+  useEffect(() => {
     const favorites =
       JSON.parse(localStorage.getItem("favorites")) || [];
 
-    return favorites.some((item) => item.url === newsUrl);
-  };
+    const isFavorite = favorites.some(
+      (item) => item.url === newsUrl
+    );
 
-  useEffect(() => {
-    setFavorite(checkFavorite());
+    setFavorite(isFavorite);
   }, [newsUrl]);
 
-  // Add or Remove Favorite
   const handleFavorite = () => {
     let favorites =
       JSON.parse(localStorage.getItem("favorites")) || [];
 
-    if (checkFavorite()) {
+    const exists = favorites.some(
+      (item) => item.url === newsUrl
+    );
+
+    if (exists) {
       favorites = favorites.filter(
         (item) => item.url !== newsUrl
       );
@@ -100,7 +103,7 @@ const NewsItems = ({
       {/* News Image */}
       <img
         src={imageUrl || defaultImage}
-        alt="News"
+        alt={title || "News"}
         className="card-img-top"
         style={{
           height: "220px",
@@ -113,7 +116,6 @@ const NewsItems = ({
 
       {/* Card Body */}
       <div className="card-body d-flex flex-column">
-
         <h5 className="card-title fw-bold">
           {title
             ? title.length > 70
@@ -131,14 +133,14 @@ const NewsItems = ({
         </p>
 
         <small className="text-muted mb-3">
-          <strong>{author || "Unknown"}</strong>
+          <strong>{author || "Unknown Source"}</strong>
           <br />
           {date
             ? new Date(date).toLocaleString()
             : "Unknown Date"}
         </small>
 
-        {/* Read More Button */}
+        {/* Read More */}
         <a
           href={newsUrl}
           target="_blank"
@@ -148,7 +150,7 @@ const NewsItems = ({
           Read More →
         </a>
 
-        {/* Favorite Button */}
+        {/* Favorite */}
         <button
           className={`btn mt-2 ${
             favorite
@@ -161,7 +163,6 @@ const NewsItems = ({
             ? "💔 Remove Favorite"
             : "❤️ Add to Favorites"}
         </button>
-
       </div>
     </div>
   );
